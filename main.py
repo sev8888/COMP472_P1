@@ -55,4 +55,5 @@ prediction = mnbc.predict(dist_test)
 answer = target_test
 
 # === STEP 7 ===
-#TODO
+with open('bbc-performance.txt','w') as f:
+    f.writelines("hello world")
