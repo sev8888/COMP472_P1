@@ -1,58 +1,45 @@
 import numpy as np
-import os
-import os.path as ospath
-from glob import glob
+import matplotlib.pyplot as plt
+import pandas
+import sklearn
+import pandas as pd
 
-from sklearn import datasets
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.model_selection import train_test_split
-import sklearn.naive_bayes as skNB
+# read drug200.csv file
+drug200read = pd.read_csv("drug200.csv")
 
-#finding BBC subdir in local directory (BBC folder needs to be in project folder COMP472_P1)
-for subdir, dirs, files in os.walk(os.curdir):
-    for dir in dirs:
-        if dir == "BBC":
-            bbcpath = ospath.join(subdir,dir)
+# storing all the Drug value from Drug colume to the DrugList
+DrugList = drug200read[["Drug"]].values
 
-# === STEP 2 ===
-categories = list()
-fcount = [0]
-for path in glob(bbcpath+'\*'):
-    if ospath.isdir(path) and path != bbcpath: #ignore source folder BBC
-        categories.append(ospath.basename(path))
-        fcount[0] = 0
-        for file in glob(path+'\*.txt'):
-            fcount[0] = fcount[0] + 1 #fcount[0] serves as our counter
-        fcount.append(fcount[0])
-fcount.pop(0) #remove counter fcount[0]
+# create 5 differences countable variable for 5 different drugs
+drugCountA = 0
+drugCountB = 0
+drugCountC = 0
+drugCountX = 0
+drugCountY = 0
 
-#TODO finish step 2 code here
+# Accessing each values in DrugList and count its total number
 
+for drug in DrugList:
+    if(drug == "drugA"):
+        drugCountA += 1
+    if(drug == "drugB"):
+        drugCountB += 1
+    if(drug == "drugC"):
+        drugCountC += 1
+    if(drug == "drugX"):
+        drugCountX += 1
+    if(drug == "drugY"):
+        drugCountY += 1
 
-# === STEP 3 ===
-corpus = datasets.load_files(container_path = bbcpath, description = "BBC dataset", encoding = 'latin1', shuffle=False)
-# returns a 'Bunch' with attributes data[], target[], target_names[], DESCR, filenames[]
-#           data[] = content of file as one string
-#         target[] = class of the file as int (index for target_name)
-#   target_names[] = name of class
-#            DESCR = description of dataset
-#      filenames[] = file names
-# -> if we need to randomize data, set shuffle to True(default)
+# print the total number of value for each drug on the Python Console
+print("Drug A: " + str(drugCountA))
+print("Drug B: " + str(drugCountB))
+print("Drug C: " + str(drugCountC))
+print("Drug X: " + str(drugCountX))
+print("Drug Y: " + str(drugCountY))
 
-# === STEP 4 ===
-vectorizerinator = CountVectorizer()
-X = vectorizerinator.fit_transform(corpus.data)
-dictionary = vectorizerinator.get_feature_names()
-distribution = X.toarray() # dist[doc][word] = wordcount
-
-# === STEP 5 ===
-dist_train, dist_test, target_train, target_test = train_test_split(distribution, corpus.target, random_state=None)
-
-# === STEP 6 ===
-mnbc = skNB.MultinomialNB()
-mnbc.fit(dist_train, target_train)
-prediction = mnbc.predict(dist_test)
-answer = target_test
-
-# === STEP 7 ===
-#TODO
+# plot the drug-distribution on the bar chart
+drugData = [drugCountA,drugCountB,drugCountC,drugCountX,drugCountY]
+drugNames = ["DrugA", "DrugB", "DrugC", "DrugX", "DrugY"]
+plt.bar(drugNames,drugData)
+plt.savefig('drug-distribution.pdf')
