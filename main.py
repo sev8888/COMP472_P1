@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sklearn
 import pandas as pd
+from sklearn.model_selection import  train_test_split
 
 # -----------
 # PART 2
@@ -75,3 +76,11 @@ pd.get_dummies(drug200read)
 # -----------
 # PART 5
 # -----------
+# Split the dataset using train_test_split
+x = drug200read[['Age','Sex','BP','Cholesterol','Na_to_K']]
+y = drug200read['Drug']
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.20,random_state=10)
+print("x_test:")
+print(x_test)
+print("y_test:")
+print(y_test)
