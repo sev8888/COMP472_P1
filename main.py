@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import sklearn
 import pandas as pd
 from sklearn.model_selection import  train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn import tree
 
 # -----------
 # PART 2
@@ -80,7 +82,21 @@ pd.get_dummies(drug200read)
 x = drug200read[['Age','Sex','BP','Cholesterol','Na_to_K']]
 y = drug200read['Drug']
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.20,random_state=10)
-print("x_test:")
-print(x_test)
-print("y_test:")
-print(y_test)
+# -----------
+# PART 6
+# -----------
+# Run 6 different classifiers
+
+# Naive Bayes Classifier
+modelNB = GaussianNB()
+modelNB.fit(x_train,y_train)
+modelNB.score(x_test,y_test)
+naiveBayesPredict = modelNB.predict(x_test)
+naiveBayesPredictProbability = modelNB.predict_proba(x_test)
+
+# Base-DT
+modelDT = tree.DecisionTreeClassifier()
+modelDT.fit(x_train,y_train)
+modelDT.score(x_test,y_test)
+BaseDTPredict = modelDT.predict(x_test)
+BaseDTPredictProbability = modelDT.predict_proba(x_test)
