@@ -7,6 +7,8 @@ from sklearn import datasets
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 import sklearn.naive_bayes as skNB
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 
 #finding BBC subdir in local directory (BBC folder needs to be in project folder COMP472_P1)
 for subdir, dirs, files in os.walk(os.curdir):
@@ -51,9 +53,13 @@ dist_train, dist_test, target_train, target_test = train_test_split(distribution
 # === STEP 6 ===
 mnbc = skNB.MultinomialNB()
 mnbc.fit(dist_train, target_train)
-prediction = mnbc.predict(dist_test)
-answer = target_test
+pred = mnbc.predict(dist_test)
+answ = target_test
 
 # === STEP 7 ===
-with open('bbc-performance.txt','w') as f:
-    f.writelines("hello world")
+n = 1
+
+with open('bbc-performance.txt','a') as f:
+    f.writelines("\n(a) :: ===== Multi-nomialNB default values, try "+n+" ====")
+    f.writelines("\n(b) :: \n"+confusion_matrix(y_pred = pred, y_true = answ))
+    f.writelines("\n(b) :: \n"+classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names))
