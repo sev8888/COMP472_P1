@@ -2,6 +2,7 @@ import numpy as np
 import os
 import os.path as ospath
 from glob import glob
+import matplotlib.pyplot as plt
 
 from sklearn import datasets
 from sklearn.feature_extraction.text import CountVectorizer
@@ -28,7 +29,38 @@ for path in glob(bbcpath+'\*'):
         fcount.append(fcount[0])
 fcount.pop(0) #remove counter fcount[0]
 
-#TODO finish step 2 code here
+print(categories)
+print(fcount)
+
+arr_categories = np.array(categories)
+arr_fcount = np.array(fcount)
+
+print(arr_categories)
+print(arr_fcount)
+
+#chart = plt.figure()
+#axis = chart.add_axes([0,0,1,1])
+x = arr_categories
+#x = ["1", "2", "3", "4", "5"]
+y = arr_fcount
+#axis.bar(x,y)
+#axis.grid(True, which = 'both')
+#axis.set_ylabel('Number of Articles')
+#axis.set_xlabel('Categories')
+plt.bar(x,y)
+plt.xlabel("Categories")
+plt.ylabel("Number of Articles")
+plt.title("Distribution of Articles by Category")
+plt.savefig('BBC-distribution.pdf')
+plt.show()
+
+#plt.plot(arr_categories, arr_fcount)
+#test = plt.figure()
+#axis = test.add_axes[0,0,1,1]
+#x = categories
+#y = fcount
+#axis.bar(x,y)
+
 
 
 # === STEP 3 ===
@@ -57,8 +89,6 @@ pred = mnbc.predict(dist_test)
 answ = target_test
 
 # === STEP 7 ===
-n = 1
-
 with open('bbc-performance.txt','a') as f:
     f.writelines("\n(a) :: ===== Multi-nomialNB default values, try "+n+" ====")
     f.writelines("\n(b) :: \n"+confusion_matrix(y_pred = pred, y_true = answ))
