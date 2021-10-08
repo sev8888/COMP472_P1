@@ -10,6 +10,8 @@ from sklearn.model_selection import train_test_split
 import sklearn.naive_bayes as skNB
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
 
 #finding BBC subdir in local directory (BBC folder needs to be in project folder COMP472_P1)
 for subdir, dirs, files in os.walk(os.curdir):
@@ -18,6 +20,7 @@ for subdir, dirs, files in os.walk(os.curdir):
             bbcpath = ospath.join(subdir,dir)
 
 # === STEP 2 ===
+print("step 2")
 categories = list()
 fcount = [0]
 for path in glob(bbcpath+'\*'):
@@ -35,8 +38,6 @@ print(fcount)
 arr_categories = np.array(categories)
 arr_fcount = np.array(fcount)
 
-print(arr_categories)
-print(arr_fcount)
 
 #chart = plt.figure()
 #axis = chart.add_axes([0,0,1,1])
@@ -64,6 +65,7 @@ plt.show()
 
 
 # === STEP 3 ===
+print("Step 3")
 corpus = datasets.load_files(container_path = bbcpath, description = "BBC dataset", encoding = 'latin1', shuffle=False)
 # returns a 'Bunch' with attributes data[], target[], target_names[], DESCR, filenames[]
 #           data[] = content of file as one string
@@ -74,22 +76,38 @@ corpus = datasets.load_files(container_path = bbcpath, description = "BBC datase
 # -> if we need to randomize data, set shuffle to True(default)
 
 # === STEP 4 ===
+print("step 4")
 vectorizerinator = CountVectorizer()
 X = vectorizerinator.fit_transform(corpus.data)
 dictionary = vectorizerinator.get_feature_names()
 distribution = X.toarray() # dist[doc][word] = wordcount
 
 # === STEP 5 ===
+print("step 5")
 dist_train, dist_test, target_train, target_test = train_test_split(distribution, corpus.target, random_state=None)
 
 # === STEP 6 ===
+print("step 6")
 mnbc = skNB.MultinomialNB()
 mnbc.fit(dist_train, target_train)
 pred = mnbc.predict(dist_test)
 answ = target_test
 
 # === STEP 7 ===
+
+## prior prob = (total num of guesses for class/cat C)/(total num of articles for C) --> see confusion matrix
+print("step 7")
+v,i = 1,1
 with open('bbc-performance.txt','a') as f:
-    f.writelines("\n(a) :: ===== Multi-nomialNB default values, try "+n+" ====")
-    f.writelines("\n(b) :: \n"+confusion_matrix(y_pred = pred, y_true = answ))
-    f.writelines("\n(b) :: \n"+classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names))
+    f.writelines("\n(a) :: ============================================\n"+
+                 "\t\tMulti-nomialNB default values, try "+str(v)+"."+str(i)+
+                 "\n       ============================================")
+    i += 1
+    f.writelines("\n(b) :: confusion matrix\n")
+    f.writelines(np.array2string(confusion_matrix(y_pred = pred, y_true = answ)))
+    f.writelines("\n(c) :: \n"+classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names))
+    f.writelines("\n(d) :: "+
+                "\nAccuracy    = " + str(accuracy_score(y_pred= pred, y_true = answ))+
+                "\nmacro-F1   = " + str(f1_score(y_pred= pred, y_true = answ, average = 'macro'))+
+                "\nweighted-F1 = " + str(f1_score(y_pred= pred, y_true = answ, average = 'weighted')))
+    f.writelines()
