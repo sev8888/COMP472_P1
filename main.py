@@ -70,24 +70,25 @@ dist_train, dist_test, target_train, target_test = train_test_split(distribution
 print("step 5 :: done")
 
 # === STEP 6 ===
-print("step 6 :: in progress")
+print("step 6 :: in progress . . .")
 mnbc = skNB.MultinomialNB()
 mnbc.fit(dist_train, target_train)
 pred = mnbc.predict(dist_test)
 answ = target_test
 print ("step 6 :: done")
 
-Xrow = X.sum(axis=0)
-Xcol = X.sum(axis=1)
 # === STEP 7 ===
-
 print("step 7 :: in progress . . .")
-def save_results(v, i):
+
+if os.path.exists("bbc-performance.txt"):
+  os.remove("bbc-performance.txt")
+
+def save_results(title = None, version = None):
     with open('bbc-performance.txt','a') as f:
         #===================================================================================
-        f.writelines("(a) :: ============================================\n"
-                    +"        Multi-nomialNB default values, try "+str(v)+"."+str(i)+"\n"
-                    +"       ============================================\n")
+        f.writelines( "(a) :: ============================================\n"
+                    + "        {}{}\n".format("MultinomialNB" if title == None else title, "" if version == None else ", try " + str(version))
+                    + "       ============================================\n")
         #===================================================================================
         cfs_matrix = confusion_matrix(y_pred = pred, y_true = answ)
         f.writelines( "\n(b) :: confusion matrix\n\n"
@@ -114,25 +115,66 @@ def save_results(v, i):
         for c in range(len(categories)):
             last = next
             next = next + fcount[c]
-            f.writelines("{:>15} : {:n} words\n".format(categories[c], X[last:next].sum()))
+            f.writelines("{:>15} : {:5n} words\n".format(categories[c], X[last:next].sum()))
         #===================================================================================
         f.writelines( "\n(h) :: # of word-tokens in corpus\n"
                     + "{:>16} words\n".format(X.sum()))
         #===================================================================================
         f.writelines( "\n(i) :: # and % of words with frequency of 0 per class\n")
+        last, next = 0, 0
+        for c in range(len(categories)):
+            last = next
+            next = next + fcount[c]
+            wcount = np.transpose(X[last:next].sum(axis=0))
+            wf0 = 0
+            for w in wcount :
+                if w == 0:
+                    wf0 = wf0 + 1
+            f.writelines("{:>15} : {:5n} words ({:.2%})\n".format(categories[c], wf0, wf0/len(vocabulary)))
         #===================================================================================
-        f.writelines( "\n(j) :: # and % of words with frequency of 1 in corpus\n")
+        wcount = np.transpose(X.sum(axis=0))
+        wf1 = 0
+        for w in wcount :
+                if w == 1:
+                    wf1 = wf1 + 1
+        f.writelines( "\n(j) :: # and % of words with frequency of 1 in corpus\n"
+                    + "{:>16} words ({:.2%})\n".format(wf1, wf1/len(vocabulary)))
         #===================================================================================
-        f.writelines( "\n(k) :: log prob of 2 favorite words\n")
+        f.writelines( "\n(k) :: log prob of 2 favorite words\n"
+                    + "\n")
+                    #TODO Q7k
 
     f.close()
-
-save_results(1, 0)
+save_results("MultinomialNB default values", 1)
 
 print("step 7 :: done")
 
 # === STEP 8 ===
+print("step 8 :: in progress . . .")
+
+mnbc = skNB.MultinomialNB()
+mnbc.fit(dist_train, target_train)
+pred = mnbc.predict(dist_test)
+save_results("MultinomialNB default values", 2)
+
+print("step 8 :: done")
 
 # === STEP 9 ===
+print("step 9 :: in progress . . .")
+
+mnbc = skNB.MultinomialNB(alpha=0.0001)
+mnbc.fit(dist_train, target_train)
+pred = mnbc.predict(dist_test)
+save_results("MultinomialNB smoothing value = 0.0001")
+
+print("step 9 :: done")
 
 # === STEP 10 ===
+print("step 10 :: in progress . . .")
+
+mnbc = skNB.MultinomialNB(alpha=0.9)
+mnbc.fit(dist_train, target_train)
+pred = mnbc.predict(dist_test)
+save_results("MultinomialNB smoothing value = 0.9")
+
+print("step 10 :: done")
