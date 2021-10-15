@@ -13,101 +13,112 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
+# === STEP 1 ===
+print("step 1 :: in progress . . .")
 #finding BBC subdir in local directory (BBC folder needs to be in project folder COMP472_P1)
 for subdir, dirs, files in os.walk(os.curdir):
     for dir in dirs:
         if dir == "BBC":
             bbcpath = ospath.join(subdir,dir)
+print("step 1 :: done")
 
 # === STEP 2 ===
-print("step 2")
-categories = list()
-fcount = [0]
+print("step 2 :: in progress . . .")
+categories = list()                                 #list of class names
+fcount = [0]                                        #list of file count in each class
 for path in glob(bbcpath+'\*'):
-    if ospath.isdir(path) and path != bbcpath: #ignore source folder BBC
-        categories.append(ospath.basename(path))
-        fcount[0] = 0
+    if ospath.isdir(path) and path != bbcpath:
+        categories.append(ospath.basename(path))    #add folder name as category
+        fcount[0] = 0                               #re-initialize file count to 0
         for file in glob(path+'\*.txt'):
-            fcount[0] = fcount[0] + 1 #fcount[0] serves as our counter
-        fcount.append(fcount[0])
-fcount.pop(0) #remove counter fcount[0]
+            fcount[0] = fcount[0] + 1               #count files in folder
+        fcount.append(fcount[0])                    #add final count to fcount
+fcount.pop(0)                                       #pop fcount[0] (file counter)
 
-print(categories)
-print(fcount)
-
-arr_categories = np.array(categories)
-arr_fcount = np.array(fcount)
-
-
-#chart = plt.figure()
-#axis = chart.add_axes([0,0,1,1])
-x = arr_categories
-#x = ["1", "2", "3", "4", "5"]
-y = arr_fcount
-#axis.bar(x,y)
-#axis.grid(True, which = 'both')
-#axis.set_ylabel('Number of Articles')
-#axis.set_xlabel('Categories')
-plt.bar(x,y)
+plt.bar(x = np.array(categories),height = np.array(fcount))
 plt.xlabel("Categories")
 plt.ylabel("Number of Articles")
 plt.title("Distribution of Articles by Category")
 plt.savefig('BBC-distribution.pdf')
-plt.show()
-
-#plt.plot(arr_categories, arr_fcount)
-#test = plt.figure()
-#axis = test.add_axes[0,0,1,1]
-#x = categories
-#y = fcount
-#axis.bar(x,y)
-
-
+#plt.show()
+print("step 2 :: done")
 
 # === STEP 3 ===
-print("Step 3")
+print("step 3 :: in progress . . .")
 corpus = datasets.load_files(container_path = bbcpath, description = "BBC dataset", encoding = 'latin1', shuffle=False)
-# returns a 'Bunch' with attributes data[], target[], target_names[], DESCR, filenames[]
+# corpus is a 'Bunch' with attributes data[], target[], target_names[], DESCR, filenames[]
 #           data[] = content of file as one string
 #         target[] = class of the file as int (index for target_name)
 #   target_names[] = name of class
 #            DESCR = description of dataset
 #      filenames[] = file names
 # -> if we need to randomize data, set shuffle to True(default)
+print("step 3 :: done")
 
 # === STEP 4 ===
-print("step 4")
+print("step 4 :: in progress . . .")
 vectorizerinator = CountVectorizer()
 X = vectorizerinator.fit_transform(corpus.data)
-dictionary = vectorizerinator.get_feature_names()
-distribution = X.toarray() # dist[doc][word] = wordcount
+vocabulary = vectorizerinator.get_feature_names()
+distribution = X.toarray()
+# distribution is an array where distribution[doc][word] = wordcount
+print("step 4 :: done")
 
 # === STEP 5 ===
-print("step 5")
+print("step 5 :: in progress . . .")
 dist_train, dist_test, target_train, target_test = train_test_split(distribution, corpus.target, random_state=None)
+print("step 5 :: done")
 
 # === STEP 6 ===
-print("step 6")
+print("step 6 :: in progress")
 mnbc = skNB.MultinomialNB()
 mnbc.fit(dist_train, target_train)
 pred = mnbc.predict(dist_test)
 answ = target_test
+print ("step 6 :: done")
 
 # === STEP 7 ===
 
 ## prior prob = (total num of guesses for class/cat C)/(total num of articles for C) --> see confusion matrix
-print("step 7")
+print("step 7 :: in progress . . .")
 v,i = 1,1
 with open('bbc-performance.txt','a') as f:
-    f.writelines("\n(a) :: ============================================\n"+
-                 "\t\tMulti-nomialNB default values, try "+str(v)+"."+str(i)+
-                 "\n       ============================================")
-    i += 1
+    #===================================================================================
+    f.writelines("(a) :: ============================================\n"
+                +"        Multi-nomialNB default values, try "+str(v)+"."+str(i)+"\n"
+                +"       ============================================\n")
+    #===================================================================================
     f.writelines("\n(b) :: confusion matrix\n")
-    f.writelines(np.array2string(confusion_matrix(y_pred = pred, y_true = answ)))
-    f.writelines("\n(c) :: \n"+classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names))
-    f.writelines("\n(d) :: "+
-                "\nAccuracy    = " + str(accuracy_score(y_pred= pred, y_true = answ))+
-                "\nmacro-F1   = " + str(f1_score(y_pred= pred, y_true = answ, average = 'macro'))+
-                "\nweighted-F1 = " + str(f1_score(y_pred= pred, y_true = answ, average = 'weighted')))
-    f.writelines()
+    f.writelines(np.array2string(confusion_matrix(y_pred = pred, y_true = answ))
+                +"\n")
+    #===================================================================================
+    f.writelines("\n(c) :: per class precision, recall and F1-measure\n"
+                +classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names)
+                +"\n")
+    #===================================================================================
+    f.writelines("\n(d) :: accuracy, macro-average F1 and weighted-average F1\n"
+                +"\n{:>15}".format("Accuracy") + " : {:.6f}".format(accuracy_score(y_pred= pred, y_true = answ))
+                +"\n{:>15}".format("macro-F1") + " : {:.6f}".format(f1_score(y_pred= pred, y_true = answ, average = 'macro'))
+                +"\n{:>15}".format("weighted-F1") + " : {:.6f}".format(f1_score(y_pred= pred, y_true = answ, average = 'weighted'))
+                +"\n")
+    #===================================================================================
+    f.writelines("\n(e) :: per class prior probabilities")
+    ftotal = float(sum(fcount))
+    for c in range(len(categories)):
+        f.writelines("\n{:>15}".format(categories[c]) + " : {:.6f}".format(fcount[c]/ftotal))
+    f.writelines("\n")
+    #===================================================================================
+    f.writelines("\n(f) ::\n")
+    #===================================================================================
+    f.writelines("\n(g) ::\n")
+    #===================================================================================
+    f.writelines("\n(h) ::\n")
+    #===================================================================================
+    f.writelines("\n(i) ::\n")
+    #===================================================================================
+    f.writelines("\n(j) ::\n")
+    #===================================================================================
+    f.writelines("\n(k) ::\n")
+
+f.close()
+print("step 7 :: done")
