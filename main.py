@@ -39,7 +39,7 @@ plt.bar(x = np.array(categories),height = np.array(fcount))
 plt.xlabel("Categories")
 plt.ylabel("Number of Articles")
 plt.title("Distribution of Articles by Category")
-plt.savefig('BBC-distribution.pdf')
+plt.savefig('bbc-distribution.pdf')
 #plt.show()
 print("step 2 :: done")
 
@@ -77,48 +77,62 @@ pred = mnbc.predict(dist_test)
 answ = target_test
 print ("step 6 :: done")
 
+Xrow = X.sum(axis=0)
+Xcol = X.sum(axis=1)
 # === STEP 7 ===
 
-## prior prob = (total num of guesses for class/cat C)/(total num of articles for C) --> see confusion matrix
 print("step 7 :: in progress . . .")
-v,i = 1,1
-with open('bbc-performance.txt','a') as f:
-    #===================================================================================
-    f.writelines("(a) :: ============================================\n"
-                +"        Multi-nomialNB default values, try "+str(v)+"."+str(i)+"\n"
-                +"       ============================================\n")
-    #===================================================================================
-    f.writelines("\n(b) :: confusion matrix\n")
-    f.writelines(np.array2string(confusion_matrix(y_pred = pred, y_true = answ))
-                +"\n")
-    #===================================================================================
-    f.writelines("\n(c) :: per class precision, recall and F1-measure\n"
-                +classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names)
-                +"\n")
-    #===================================================================================
-    f.writelines("\n(d) :: accuracy, macro-average F1 and weighted-average F1\n"
-                +"\n{:>15}".format("Accuracy") + " : {:.6f}".format(accuracy_score(y_pred= pred, y_true = answ))
-                +"\n{:>15}".format("macro-F1") + " : {:.6f}".format(f1_score(y_pred= pred, y_true = answ, average = 'macro'))
-                +"\n{:>15}".format("weighted-F1") + " : {:.6f}".format(f1_score(y_pred= pred, y_true = answ, average = 'weighted'))
-                +"\n")
-    #===================================================================================
-    f.writelines("\n(e) :: per class prior probabilities")
-    ftotal = float(sum(fcount))
-    for c in range(len(categories)):
-        f.writelines("\n{:>15}".format(categories[c]) + " : {:.6f}".format(fcount[c]/ftotal))
-    f.writelines("\n")
-    #===================================================================================
-    f.writelines("\n(f) ::\n")
-    #===================================================================================
-    f.writelines("\n(g) ::\n")
-    #===================================================================================
-    f.writelines("\n(h) ::\n")
-    #===================================================================================
-    f.writelines("\n(i) ::\n")
-    #===================================================================================
-    f.writelines("\n(j) ::\n")
-    #===================================================================================
-    f.writelines("\n(k) ::\n")
+def save_results(v, i):
+    with open('bbc-performance.txt','a') as f:
+        #===================================================================================
+        f.writelines("(a) :: ============================================\n"
+                    +"        Multi-nomialNB default values, try "+str(v)+"."+str(i)+"\n"
+                    +"       ============================================\n")
+        #===================================================================================
+        cfs_matrix = confusion_matrix(y_pred = pred, y_true = answ)
+        f.writelines( "\n(b) :: confusion matrix\n\n"
+                    + np.array2string(cfs_matrix) + "\n")
+        #===================================================================================
+        clssf_rep = classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names)
+        f.writelines( "\n(c) :: per class precision, recall and F1-measure\n\n"
+                    + clssf_rep + "\n")
+        #===================================================================================
+        f.writelines( "\n(d) :: accuracy, macro-average F1 and weighted-average F1\n"
+                    + "{:>15} : {:.6f}\n".format("Accuracy", accuracy_score(y_pred= pred, y_true = answ))
+                    + "{:>15} : {:.6f}\n".format("Macro-F1", f1_score(y_pred= pred, y_true = answ, average = 'macro'))
+                    + "{:>15} : {:.6f}\n".format("Weighted-F1", f1_score(y_pred= pred, y_true = answ, average = 'weighted')))
+        #===================================================================================
+        f.writelines( "\n(e) :: per class prior probabilities\n")
+        for c in range(len(categories)):
+            f.writelines( "{:>15} : {:.6f} \n".format(categories[c], float(fcount[c]/sum(fcount))))
+        #===================================================================================
+        f.writelines( "\n(f) :: size of vocabulary\n"
+                    + "{:>16} words\n".format(len(vocabulary)))
+        #===================================================================================
+        f.writelines( "\n(g) :: # of word-tokens per class\n")
+        last, next = 0, 0
+        for c in range(len(categories)):
+            last = next
+            next = next + fcount[c]
+            f.writelines("{:>15} : {:n} words\n".format(categories[c], X[last:next].sum()))
+        #===================================================================================
+        f.writelines( "\n(h) :: # of word-tokens in corpus\n"
+                    + "{:>16} words\n".format(X.sum()))
+        #===================================================================================
+        f.writelines( "\n(i) :: # and % of words with frequency of 0 per class\n")
+        #===================================================================================
+        f.writelines( "\n(j) :: # and % of words with frequency of 1 in corpus\n")
+        #===================================================================================
+        f.writelines( "\n(k) :: log prob of 2 favorite words\n")
 
-f.close()
+    f.close()
+
+save_results(1, 0)
+
 print("step 7 :: done")
+
+# === STEP 8 ===
+
+# === STEP 9 ===
+
+# === STEP 10 ===
