@@ -96,7 +96,7 @@ def save_results(title = None, version = None):
         #===================================================================================
         clssf_rep = classification_report(y_pred = pred, y_true = answ, target_names = corpus.target_names)
         f.writelines( "\n(c) :: per class precision, recall and F1-measure\n\n"
-                    + clssf_rep + "\n")
+                    + clssf_rep)
         #===================================================================================
         f.writelines( "\n(d) :: accuracy, macro-average F1 and weighted-average F1\n"
                     + "{:>15} : {:.6f}\n".format("Accuracy", accuracy_score(y_pred= pred, y_true = answ))
