@@ -2,8 +2,9 @@ import numpy as np
 import os
 import os.path as ospath
 from glob import glob
-import matplotlib.pyplot as plt
+from zipfile import ZipFile
 
+import matplotlib.pyplot as plt
 from sklearn import datasets
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
@@ -16,10 +17,13 @@ from sklearn.metrics import f1_score
 # === STEP 1 ===
 print("step 1 :: in progress . . .")
 #finding BBC subdir in local directory (BBC folder needs to be in project folder COMP472_P1)
-for subdir, dirs, files in os.walk(os.curdir):
-    for dir in dirs:
-        if dir == "BBC":
-            bbcpath = ospath.join(subdir,dir)
+bbcpath = ospath.join(os.curdir, 'BBC')
+if not os.path.isdir('BBC'):
+    with ZipFile('BBC-20210914T194535Z-001.zip','r') as zipObj:
+        zipObj.extractall()
+        print("-> extracted BBC zip")
+else:
+    print("-> BBC dir exists")
 print("step 1 :: done")
 
 # === STEP 2 ===
