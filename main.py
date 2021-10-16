@@ -1,91 +1,73 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import sklearn
-import pandas as pd
-from sklearn.model_selection import  train_test_split
-from sklearn.naive_bayes import GaussianNB
-from sklearn import tree
+import numpy                    as np
+import pandas                   as pd
+import matplotlib.pyplot        as plt
+
+from pandas.api.types           import is_numeric_dtype
+from sklearn.model_selection    import train_test_split
+
+from sklearn.naive_bayes        import GaussianNB
+from sklearn.tree               import DecisionTreeClassifier
+from sklearn.model_selection    import GridSearchCV
+from sklearn.linear_model       import Perceptron
+from sklearn.neural_network     import MLPClassifier
 
 # -----------
-# PART 2
+# PART 2 - load dataset in python
 # -----------
-
-# read drug200.csv file
-drug200read = pd.read_csv("drug200.csv")
+drug200data = pd.read_csv("drug200.csv")    # import dataset "drug200.csv" as "drug200data"
+features = drug200data.columns.values       # get features of dataset
 
 # -----------
-# PART 3
+# PART 3 - plot distribution
 # -----------
-# storing all the Drug value from Drug colume to the DrugList
-DrugList = drug200read[["Drug"]].values
+drugList = drug200data[features[-1]].values # storing all the Drug value from Drug colume to the DrugList
+drugType = []                               # save drugTypes and drugCounts in dynamic list
+drugCount = []
 
-# create 5 differences countable variable for 5 different drugs
-drugCountA = 0
-drugCountB = 0
-drugCountC = 0
-drugCountX = 0
-drugCountY = 0
+# Accessing each type of drug in DrugList and count total amount of each drug
+for drug in drugList:
+    for i in range(len(drugType)):
+        if drug == drugType[i]:
+            drugCount[i] = drugCount[i] + 1
+            break
+    else:
+        drugType.append(drug)
+        drugCount.append(1)
 
-# Accessing each values in DrugList and count its total number
+# sort drugs in alphabetical order
+drugType, drugCount = zip(*sorted(zip(drugType,drugCount)))
 
-for drug in DrugList:
-    if(drug == "drugA"):
-        drugCountA += 1
-    if(drug == "drugB"):
-        drugCountB += 1
-    if(drug == "drugC"):
-        drugCountC += 1
-    if(drug == "drugX"):
-        drugCountX += 1
-    if(drug == "drugY"):
-        drugCountY += 1
-
-# print the total number of value for each drug on the Python Console
-print("Drug A: " + str(drugCountA))
-print("Drug B: " + str(drugCountB))
-print("Drug C: " + str(drugCountC))
-print("Drug X: " + str(drugCountX))
-print("Drug Y: " + str(drugCountY))
-
-# plot the drug-distribution on the bar chart
-drugData = [drugCountA,drugCountB,drugCountC,drugCountX,drugCountY]
-drugNames = ["DrugA", "DrugB", "DrugC", "DrugX", "DrugY"]
-plt.bar(drugNames,drugData)
+# plot drug distribution on the bar chart
+#print(drugCount2)
+plt.bar(drugType,drugCount)
+plt.title("Distribution of Drugs by Type")
 plt.savefig('drug-distribution.pdf')
 
 # -----------
-# PART 4
+# PART 4 - convert ordinal and nominal features in numerical format
 # -----------
-# Convert BP to numerical number
-drug200read["BP"] = pd.Categorical(drug200read["BP"],['LOW','NORMAL','HIGH'],ordered=True)
-drug200read["BP"] = drug200read["BP"].cat.codes
-
-# Convert Cholesterol to numerical number
-drug200read["Cholesterol"] = pd.Categorical(drug200read["Cholesterol"],['LOW','NORMAL','HIGH'],ordered=True)
-drug200read["Cholesterol"] = drug200read["Cholesterol"].cat.codes
-
-# convert Drug to numerical number
-# DrugA = 0, DrugB = 1, DrugC = 2, DrugX = 3, DrugY = 4
-drug200read["Drug"] = pd.Categorical(drug200read["Drug"],['drugA','drugB','drugC','drugX','drugY'],ordered=True)
-drug200read["Drug"] = drug200read["Drug"].cat.codes
-
-# convert Sex to numerical number
-drug200read["Sex"] = pd.Categorical(drug200read["Sex"],['M','F'])
-drug200read["Sex"] = drug200read["Sex"].cat.codes
-drug200read.dropna(axis=0,how='any',inplace=True)
-pd.get_dummies(drug200read)
+for f in features:
+    if not is_numeric_dtype(drug200data[f]):
+        fvalues = drug200data[f].unique()
+        #if ordinal feature, convert using [LOW, NORMAL, HIGH] scale
+        if 'HIGH' in fvalues or 'NORMAL' in fvalues or 'LOW' in fvalues:
+            drug200data[f] = pd.Categorical(values=drug200data[f], categories=['LOW','NORMAL','HIGH'], ordered=True)
+        #else convert as nominal feature
+        else:
+            drug200data[f] = pd.Categorical(values=drug200data[f], ordered=False)
+        print("{}: {}".format(f, drug200data[f].cat.categories))
+        drug200data[f] = drug200data[f].cat.codes
 
 # -----------
-# PART 5
+# PART 5 - split dataset
 # -----------
-# Split the dataset using train_test_split
-x = drug200read[['Age','Sex','BP','Cholesterol','Na_to_K']]
-y = drug200read['Drug']
+x = drug200data[features[0:-1]]
+y = drug200data[features[-1]]
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.20,random_state=10)
+
 # -----------
-# PART 6
+# PART 6 - run classifiers
 # -----------
-# Run 6 different classifiers
 
 # Naive Bayes Classifier
 modelNB = GaussianNB()
@@ -95,7 +77,7 @@ naiveBayesPredict = modelNB.predict(x_test)
 naiveBayesPredictProbability = modelNB.predict_proba(x_test)
 
 # Base-DT
-modelDT = tree.DecisionTreeClassifier()
+modelDT = DecisionTreeClassifier()
 modelDT.fit(x_train,y_train)
 modelDT.score(x_test,y_test)
 BaseDTPredict = modelDT.predict(x_test)
