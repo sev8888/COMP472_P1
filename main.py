@@ -20,26 +20,15 @@ features = drug200data.columns.values       # get features of dataset
 # -----------
 # PART 3 - plot distribution
 # -----------
-drugList = drug200data[features[-1]].values # storing all the Drug value from Drug colume to the DrugList
-drugType = []                               # save drugTypes and drugCounts in dynamic list
-drugCount = []
-
-# Accessing each type of drug in DrugList and count total amount of each drug
-for drug in drugList:
-    for i in range(len(drugType)):
-        if drug == drugType[i]:
-            drugCount[i] = drugCount[i] + 1
-            break
-    else:
-        drugType.append(drug)
-        drugCount.append(1)
-
-# sort drugs in alphabetical order
-drugType, drugCount = zip(*sorted(zip(drugType,drugCount)))
+drugList = drug200data[features[-1]] # storing all the Drug value from Drug colume to the DrugList
+drugCount = drugList.value_counts().sort_index().reset_index()
+drugTypes = drugCount[drugCount.axes[1][0]].values
+print(drugTypes)
+drugCount = drugCount[drugCount.axes[1][1]].values
+print(drugCount)
 
 # plot drug distribution on the bar chart
-#print(drugCount2)
-plt.bar(drugType,drugCount)
+plt.bar(drugTypes,drugCount)
 plt.title("Distribution of Drugs by Type")
 plt.savefig('drug-distribution.pdf')
 
@@ -63,22 +52,45 @@ for f in features:
 # -----------
 x = drug200data[features[0:-1]]
 y = drug200data[features[-1]]
-x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.20,random_state=10)
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.20)
 
 # -----------
 # PART 6 - run classifiers
 # -----------
 
-# Naive Bayes Classifier
-modelNB = GaussianNB()
-modelNB.fit(x_train,y_train)
-modelNB.score(x_test,y_test)
-naiveBayesPredict = modelNB.predict(x_test)
-naiveBayesPredictProbability = modelNB.predict_proba(x_test)
+def runClassifiers(x_train, x_test, y_train, y_test):
+    # Naive Bayes Classifier
+    NB = GaussianNB()
+    NB.fit(x_train,y_train)
+    NBpredict = NB.predict(x_test)
 
-# Base-DT
-modelDT = DecisionTreeClassifier()
-modelDT.fit(x_train,y_train)
-modelDT.score(x_test,y_test)
-BaseDTPredict = modelDT.predict(x_test)
-BaseDTPredictProbability = modelDT.predict_proba(x_test)
+    # Base Decision Tree
+    DT = DecisionTreeClassifier()
+    DT.fit(x_train,y_train)
+    BaseDTpredict = DT.predict(x_test)
+
+    # Top Decision Tree
+    DTparams = {'criterion':('gini','entropy'),
+                'max_depth':(),                 #add 2 diff values here (default=None)
+                'min samples split':()}         #add 3 diff values here (default=2)
+    TOPDT = GridSearchCV(estimator=DecisionTreeClassifier(),param_grid=DTparams)
+    TOPDT.fit(x_train,y_train)
+    TOPDTpredict = TOPDT.predict(x_test)
+
+    # PER
+    PER = Perceptron()
+    PER.fit(x_train,y_train)
+    PERpredict = PER.predict(x_test)
+
+    # Base MLP
+    MLP = MLPClassifier()
+    MLP.fit(x_train,y_train)
+    MLPpredict = MLP.predict(x_test)
+
+    # Top MLP
+    MLPparams = {'activation function':('sigmoid','tanh','relu','identity'),
+                 'hidden_layer_sizes':((30,50),(10,10,10)), #add 2 diff network architecture
+                 'solver':('adam','sgd')}
+    TOPMLP = GridSearchCV(estimator=MLPClassifier(),param_grid=MLPparams)
+    TOPMLP.fit(x_train,y_train)
+    TOPMLPpredict = TOPMLP.predict(x_test)
