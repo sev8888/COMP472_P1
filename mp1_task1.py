@@ -1,18 +1,15 @@
-import numpy as np
 import os
-import os.path as ospath
-from glob import glob
-from zipfile import ZipFile
+import os.path             as ospath
+from glob                  import glob
+from zipfile               import ZipFile
 
-import matplotlib.pyplot as plt
-from sklearn import datasets
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.model_selection import train_test_split
+import matplotlib.pyplot   as plt
+import numpy               as np
 import sklearn.naive_bayes as skNB
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import f1_score
+from sklearn                         import datasets
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics                 import (accuracy_score, classification_report, confusion_matrix, f1_score)
+from sklearn.model_selection         import train_test_split
 
 # === STEP 1 ===
 print("step 1 :: in progress . . .")
