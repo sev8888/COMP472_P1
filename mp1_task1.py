@@ -147,15 +147,18 @@ def save_results(title = None, version = None):
         f.writelines( "\n(k) :: log prob of 2 favorite words\n"
                     + "\n")
                     #TODO Q7k
-        f.writelines("favourite word 1 is: "+vocabulary[9999]+"\n")
-        
+
+        word1, word2  = 9999, 29000
+                    
+        f.writelines("favourite word 1 is: "+vocabulary[word1]+"\n")
         for x in range(5):
-            f.writelines("log_prob feature {vocab} for category {cat} is {prob_log} \n".format(vocab = vocabulary[9999], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][9999]))
+            f.writelines("log_prob of feature \'{vocab}\' for category {cat} is {prob_log:.4f} \n".format(vocab = vocabulary[word1], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][word1]))
         
         f.writelines("\n------------------------------------------\n")
 
+        f.writelines("favourite word 1 is: "+vocabulary[word2]+"\n")
         for x in range(5):
-            f.writelines("log_prob feature {vocab} for category {cat} is {prob_log} \n".format(vocab = vocabulary[29000], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][29000]))
+            f.writelines("log_prob of feature \'{vocab}\' for category {cat} is {prob_log:.4f} \n".format(vocab = vocabulary[word2], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][word2]))
 
             
         f.writelines("\n")
