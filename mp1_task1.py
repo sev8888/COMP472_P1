@@ -152,13 +152,13 @@ def save_results(title = None, version = None):
                     
         f.writelines("favourite word 1 is: "+vocabulary[word1]+"\n")
         for x in range(5):
-            f.writelines("log_prob of feature \'{vocab}\' for category {cat} is {prob_log:.4f} \n".format(vocab = vocabulary[word1], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][word1]))
+            f.writelines("log_prob of feature \'{vocab}\' for category {cat:15} is {prob_log:.4f} \n".format(vocab = vocabulary[word1], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][word1]))
         
         f.writelines("\n------------------------------------------\n")
 
         f.writelines("favourite word 1 is: "+vocabulary[word2]+"\n")
         for x in range(5):
-            f.writelines("log_prob of feature \'{vocab}\' for category {cat} is {prob_log:.4f} \n".format(vocab = vocabulary[word2], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][word2]))
+            f.writelines("log_prob of feature \'{vocab}\' for category {cat:15} is {prob_log:.4f} \n".format(vocab = vocabulary[word2], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][word2]))
 
             
         f.writelines("\n")
