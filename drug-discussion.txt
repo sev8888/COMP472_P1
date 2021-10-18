@@ -1,9 +1,2 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2580
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww28600\viewh17440\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 Question 8: \
-	Same model will give the same performance 90% of the time. Among 10 trials it return the same performance 9 times. Only the second trial return a tiny different performance for Top Multilayer Perceptron and Multilayer Perceptron. In conclussion, the same model will most likely give the same performance every time.  }
+	Same model will give the same performance 90% of the time. Among 10 trials it return the same performance 9 times. Only the second trial return a tiny different performance for Top Multilayer Perceptron and Multilayer Perceptron. In conclussion, the same model will most likely give the same performance every time. 
