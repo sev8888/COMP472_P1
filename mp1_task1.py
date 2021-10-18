@@ -145,11 +145,24 @@ def save_results(title = None, version = None):
                     + "{:>16} words ({:.2%})\n".format(wf1, wf1/len(vocabulary)))
         #===================================================================================
         f.writelines( "\n(k) :: log prob of 2 favorite words\n"
-                    + "\n")
-                    #TODO Q7k
+                    + "\n")    
+        for x in range(5):
+            f.writelines("feature {vocab} for category {cat} is {prob_log} \n".format(vocab = vocabulary[9999], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][9999]))
+        
+        f.writelines("\n------------------------------------------\n")
+
+        for x in range(5):
+            f.writelines("feature {vocab} for category {cat} is {prob_log} \n".format(vocab = vocabulary[29000], cat = categories[x],prob_log = mnbc.feature_log_prob_[x][29000]))
+
+    
+        f.writelines("\n")
 
     f.close()
 save_results("MultinomialNB default values", 1)
+
+
+
+
 
 print("step 7 :: done")
 
