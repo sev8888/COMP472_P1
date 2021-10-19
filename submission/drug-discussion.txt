@@ -1,0 +1,2 @@
+
+	Same model will give the same performance 90% of the time. Among 10 trials it return the same performance 9 times. Only the second trial return a tiny different performance for Top Multilayer Perceptron and Multilayer Perceptron. In conclussion, the same model will most likely give the same performance every time. 

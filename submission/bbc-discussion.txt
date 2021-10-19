@@ -1,0 +1,13 @@
+Q1:  what metric is best suited to this dataset\task and why (see step(2)) ? 
+
+The obtained distribution from step 2 illustrates the following: business has 510 documents, entertainment has 386 documents, politics has 417 documents, sport has 511 documents and tech has 401 documents. 
+As such, the distributions are relatively close to each other, with a relatively low standard deviation (approximately 2.5%): the percentage of documents from class to class does not vary significantly. 
+As such, classes are equally represented.  To that effect and given that the primary purpose of the text classifier has not been defined (whether it would be used in the search engine or just general classification purposes), 
+the most appropriate evaluation metric would be accuracy.  Accuracy measures the percentage of instances of the test set which the algorithm has correctly classified and assigns an equal amount of importance to each class.
+As classes are equally represented, accuracy would be the most appropriate evaluation matrix.
+ 
+Q2: why the performance of steps (8-10) are the same or are different than those of step (7) above? 
+
+The performance of steps 8 through 10, which includes reusing the same parameters as step 7 as well as varying the smoothing values, all produce the exact same results as step 7.  This could be due to the smoothing value variation being negligeable 
+due to the overall high word count and dictionary size present in the documents. As such, it is possible that a large enough sample already exists to accurately execute the desired tasks.  It is also possible that the smoothing value is relatively 
+small, especially compared to the word count and as such has no impact on the performance.  
