@@ -1,3 +1,7 @@
+#Sevag Kaspar - 40100393
+#Duc Minh Bui - 40073498
+#Minh-Tam Do  - 40095639
+
 import numpy as np
 import os
 import os.path as ospath
