@@ -1,3 +1,5 @@
+github repo URL: https://github.com/sev8888/COMP472_P1
+
 Sevag Kaspar - 40100393
 Duc Minh Bui - 40073498
 Minh-Tam Do  - 40095639
